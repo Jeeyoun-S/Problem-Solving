@@ -1,5 +1,7 @@
 # Solving Problem
 
+[![Solved.ac Profile](http://mazassumnida.wtf/api/v2/generate_badge?boj=jeey0124)](https://solved.ac/jeey0124/)
+
 ## 6. Python Algorithm Study
 - 2023.06.14 ~ ing (3명)
 - 매주 일요일 오후 2시 온라인 코드리뷰
