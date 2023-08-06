@@ -1,43 +1,50 @@
+from heapq import heappop, heappush
 import sys
-input = sys.stdin.readline
-def find(c):
-	if par[c] == c:
-		return c
-	else:
-		par[c] = find(par[c])
-	return par[c]
- 
+
+
+def find(x):
+    if home[x] < 0:
+        return x
+
+    home[x] = find(home[x])
+    return home[x]
+
+
 def union(a, b):
-	a, b = find(a), find(b)
-	par[max(a, b)] = min(a, b)
- 
-def check(a, b):
-	return find(a) == find(b)
- 
-# a통로와 b통로의 거리를 구하는 함수
-def dist(a, b):
-	return ((a[0] - b[0])**2 + (a[1] - b[1])**2)**(1/2)
- 
-N, M = map(int,input().split())
-par = [i for i in range(N)]
-coordinate, graph = [], []
-answer = 0
-for _ in range(N):
-	x, y = map(int,input().split())
-	coordinate.append((x,y))
-# 이미 연결되어 있는 통로 union해주기
+    a, b = find(a), find(b)
+    home[b] = a
+
+
+N, M = map(int, sys.stdin.readline().split())
+home = [-1] * (N + 1)
+arr = [list(map(int, sys.stdin.readline().split())) for _ in range(N)]
+my_heap = []
+answer, cnt = 0, 0
+
+for i in range(N):
+    for j in range(i+1, N):
+        weight = pow(pow(arr[i][0] - arr[j][0], 2) + pow(arr[i][1] - arr[j][1], 2), 0.5)
+        heappush(my_heap, (weight, i+1, j+1))
+
+# 이제 주어지는 좌표들은 연결된 좌표이므로 연결시켜주기
 for _ in range(M):
-	x, y = map(int,input().split())
-	union(x-1, y-1)
- 
-# 각 통로들 사이의 거리를 구해서 graph에 넣는 과정
-for i in range(N-1):
-	for j in range(i+1, N):
-		graph.append((i, j, dist(coordinate[i], coordinate[j])))
-# 거리순으로 오름차순 정렬
-graph.sort(key= lambda x: x[2])
-for i in graph:
-	if not check(i[0], i[1]):
-		union(i[0], i[1])
-		answer += i[2]
-print('%.2f' %(answer))
+    x, y = map(int, sys.stdin.readline().split())
+    if find(x) != find(y):
+        union(x, y)
+        cnt += 1
+
+for i in range(len(my_heap)):
+	# 우선순위 큐인 힙에서 최소값 하나씩 뽑아
+    w, a, b = heappop(my_heap)
+	# 해당 좌표들인 a와 b가 연결X 일 경우,
+    if find(a) != find(b):
+    	# 연결시켜주고 가중치 저장
+        union(a, b)
+        answer += w
+        cnt += 1
+        
+		# N개의 정점을 가진 그래프의 최소 간선은 N-1개
+        if cnt == N-1:
+            break
+
+print(format(answer, ".2f"))
