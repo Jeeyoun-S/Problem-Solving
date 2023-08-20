@@ -46,15 +46,14 @@ def bfs(sx, sy, ex, ey):
     return min(visited[ex][ey])
 
 
-if __name__ == "__main__":
-    w, h = map(int, input().split())
+w, h = map(int, input().split())
 
-    pos = []
-    board = []
-    for i in range(h):
-        board.append(list(input().strip()))
-        for j in range(w):
-            if board[i][j] == "C":
-                pos.append((i, j))
+pos = []
+board = []
+for i in range(h):
+    board.append(list(input().strip()))
+    for j in range(w):
+        if board[i][j] == "C":
+            pos.append((i, j))
 
-    print(bfs(pos[0][0], pos[0][1], pos[1][0], pos[1][1]))
+print(bfs(pos[0][0], pos[0][1], pos[1][0], pos[1][1]))
