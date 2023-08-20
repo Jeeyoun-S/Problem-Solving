@@ -1,59 +1,52 @@
 from collections import deque
-import sys
 
-input = sys.stdin.readline
-INF = int(1e9)
+direction = ((0, 1), (1, 0), (0, -1),  (-1, 0))
 
-# 서-북-동-남
-dx = [0, -1, 0, 1]
-dy = [-1, 0, 1, 0]
+def count_the_minimum_mirrors(arr, start, end):
+    si, sj  = start
+    ei, ej = end
+    queue = deque()
+    visited = [[0] * (N + 2) for _ in range(M +2)]
 
+    # set the start point
+    queue.append((si, sj))
+    visited[si][sj] = 1
 
-def bfs(sx, sy, ex, ey):
-    q = deque()
-    visited = [[[INF] * 4 for _ in range(w)] for _ in range(h)] # ✅
+    # bfs
+    while queue:
+        i, j = queue.popleft()
 
-    for i in range(4):
-        nx = sx + dx[i]
-        ny = sy + dy[i]
-        if 0 <= nx < h and 0 <= ny < w and board[nx][ny] != "*":
-            q.append((nx, ny, i))
-            visited[nx][ny][i] = 0
-
-    while q:
-        x, y, direct = q.popleft()
-
-        for i in range(4):
-            nx = x + dx[i]
-            ny = y + dy[i]
-            if 0 <= nx < h and 0 <= ny < w and board[nx][ny] != "*":
-                cnt = visited[x][y][direct]
-                if direct == 0 or direct == 2:
-                    if i == 1 or i == 3:
-                        cnt += 1
-                else:
-                    if i == 0 or i == 2:
-                        cnt += 1
-
-                if visited[nx][ny][i] == -1:  # 방문한 적이 없음
-                    visited[nx][ny][i] = cnt
-                    q.append((nx, ny, i))
-                else:  # 방문을 했는데 이전 거울개수보다 최솟값이라면
-                    if visited[nx][ny][i] > cnt:
-                        visited[nx][ny][i] = cnt
-                        q.append((nx, ny, i))
-
-    return min(visited[ex][ey])
+        # end condition
+        cur_mirror = visited[i][j]
+        if i == ei and j == ej:
+            return  cur_mirror - 2
+        
+        # insert every nodes in one line
+        new_mirror =  cur_mirror + 1
+        for idx in range(4):
+            ni, nj = i, j
+            di, dj  = direction[idx]
+            while (arr[ni][nj] == '.' or arr[ni][nj] == 'C'):
+                ni += di
+                nj += dj
+                if visited[ni][nj]:
+                    continue
+                visited[ni][nj] = new_mirror
+                queue.append((ni,  nj))
 
 
-w, h = map(int, input().split())
+if __name__ == '__main__':
+    # N: columns, M: row
+    N, M = map(int, input().split())
+    arr = [[0] * (N + 2)] + [[0] + list(input()) + [0] for _ in range(M)] + [[0] * (N + 2)]
 
-pos = []
-board = []
-for i in range(h):
-    board.append(list(input().strip()))
-    for j in range(w):
-        if board[i][j] == "C":
-            pos.append((i, j))
+    # find the laser points
+    C = []
+    for i in range(1, M + 1):
+        for j in range(1, N + 1):
+            if arr[i][j] == 'C':
+                C.append((i, j))
 
-print(bfs(pos[0][0], pos[0][1], pos[1][0], pos[1][1]))
+    # bfs based on the turning points
+    answer = count_the_minimum_mirrors(arr, C[0], C[1])
+    print(answer)
