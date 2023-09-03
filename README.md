@@ -1,6 +1,8 @@
 # Solving Problem
 
 [![Solved.ac Profile](http://mazassumnida.wtf/api/v2/generate_badge?boj=jeey0124)](https://solved.ac/jeey0124/)
+- 사용 언어: Python, Java
+- HSAT(Softeer 인증평가) Level3 취득
 
 ## 6. Python Algorithm Study
 - 2023.06.14 ~ ing (4명)
