@@ -1,19 +1,33 @@
-from collections import deque
-
 def solution(m, n, puddles):
+    answer = 0
+    cur = [0, 0]
     
-    delta = ((-1, 0), (0, -1)) # 이동할 위치
-    maps = [[0 for j in range(m)] for i in range(n)] # 지도
-    maps[0][0] = 1 # 집에서 출발
+    board = [[0] * (m + 1) for _ in range(n + 1)]
     
-    # 1행 1열 -> 1행 2열 -> ... -> 2행 1열 순으로 반복
-    for x in range(n):
-        for y in range(m):
-            if [y+1, x+1] in puddles: # 웅덩이가 있다면
-                continue
-            # 위와 왼쪽에 값이 있다면 더해주기
-            for dx, dy in delta:
-                xx, yy = x+dx, y+dy
-                if 0 <= xx < n and 0 <= yy < m:
-                    maps[x][y] = (maps[x][y] + maps[xx][yy]) % 1000000007
-    return maps[n-1][m-1]
+    if m == 1 and puddles:
+        return 0
+    
+    if n == 1 and puddles:
+        return 0
+    
+    board[1][1] = 1
+#     for i in range(1, m + 1):
+#         board[1][i] = 1
+
+#     for j in range(1, n + 1):
+#         board[j][1] = 1
+    
+    for p in puddles:
+        board[p[1]][p[0]] = -1
+    
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if board[j][i] != -1:
+                if board[j - 1][i] != -1:
+                    board[j][i] += board[j - 1][i]
+                if board[j][i - 1] != -1:
+                    board[j][i] += board[j][i - 1]
+                
+                board[n][m] %= 1000000007
+    
+    return board[n][m]
